@@ -1,0 +1,76 @@
+@inject ILocalizationService Localizer
+
+@page "/settings"
+@using GlobusDesktop.Helpers
+@using GlobusDesktop.Services
+
+
+@code
+{
+    private bool _ready = false;
+    private int _counter = -1;
+
+    private int Count()
+    {
+        _counter++;
+        return _counter;
+    }
+
+    private string Reset()
+    {
+        _counter = -1;
+
+        return "";
+    }
+
+    private void ChooseCulture(string culture)
+    {
+        Serilog.Log.Information(culture + " " + CultureInfo.CurrentCulture.NativeName + " " + CultureHelper.DefaultCulture());
+        
+        CultureInfo.CurrentUICulture = new CultureInfo(culture);
+    }
+    
+}
+
+@if (_ready)
+{
+    <h1>@Localizer["Settings.PanelTitle"]</h1>
+    
+    <p>@Localizer["Settings.Language"]</p>
+    
+    <div class="select-box" style="width: 300px">
+        <div class="select-box__current" tabindex="1">
+            @foreach (var culture in CultureHelper.SupportedCultures)
+            {
+                <div class="select-box__value">
+                    <input class="select-box__input" type="radio" id="@Count()" value="1" name="Language" checked="checked" />
+                    <p class="select-box__input-text">@CultureInfo.GetCultureInfo(culture).NativeName</p>
+                </div>
+            }
+            @Reset()
+            <img class="select-box__icon" src="http://cdn.onlinewebfonts.com/svg/img_295694.svg" alt="Arrow Icon" aria-hidden="true"/>
+        </div>
+        <ul class="select-box__list">
+            @foreach (var culture in CultureHelper.SupportedCultures)
+            {
+                <li @onclick="() => ChooseCulture(culture)" >
+                    <label class="select-box__option" for="@Count()" aria-hidden="aria-hidden">@CultureInfo.GetCultureInfo(culture).NativeName</label>
+                </li>
+            }
+            @Reset()
+        </ul>
+    </div>
+}
+else
+    {
+    <EnterAnimation/>
+    }
+    @code
+    {
+        protected override async Task OnInitializedAsync()
+        {
+            _ready = false;
+            await Task.Delay(1000);
+            _ready = true;
+        }
+    }

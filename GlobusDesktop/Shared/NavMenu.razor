@@ -1,0 +1,49 @@
+﻿<div class="@NavMenuCssClass" @onclick="ToggleNavMenu" style="height: 100%">
+    <ul class="nav flex-column" style="height: 100% !important;">
+        <li class="nav-item px-3 menu-item">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-home" aria-hidden="true"></span> 
+            </NavLink>
+        </li>
+        <li class="nav-item px-3 menu-item">
+            <NavLink class="nav-link" href="pulse">
+                <span class="oi oi-pulse" aria-hidden="true"></span>
+            </NavLink>
+        </li>
+        <li class="nav-item px-3 menu-item">
+            <NavLink class="nav-link" href="counter">
+                <span class="oi oi-plus" aria-hidden="true"></span> 
+            </NavLink>
+        </li>
+        <li class="nav-item px-3 menu-item">
+            <NavLink class="nav-link" href="fetchdata">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> 
+            </NavLink>
+        </li>
+        <div style="margin-top: auto;">
+            <li class="nav-item px-3 menu-item" >
+                <NavLink class="nav-link" href="documentation">
+                    <span class="oi oi-book" aria-hidden="true"></span>
+                </NavLink>
+            </li>
+            <li class="nav-item px-3 menu-item">
+                <NavLink class="nav-link" href="settings">
+                    <span class="oi oi-wrench" aria-hidden="true"></span>
+                </NavLink>
+            </li>
+        </div>
+        
+    </ul>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+}
