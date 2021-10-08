@@ -1,0 +1,104 @@
+﻿@page "/grafana"
+@using System.Text
+@using ObservabilityPlatform.GrafanaClient.Entities
+@using ObservabilityPlatform.GrafanaClient.Helpers
+@using System.IO
+@using GlobusDesktop.Builders
+@using GlobusDesktop.Services
+@inject IGrafanaService GrafanaService
+
+@if (GrafanaService != null)
+{
+    <div class="container">
+        <h1>Datasource Creator</h1>
+        <br>
+        <h3>Создание нового datasource из json файлов</h3>
+        <p>В открывшемся диалоге выбора файлов, выберите нужные для загрузки файлы. 
+            В одном файле должен содержаться один datasource</p>
+        <InputFile OnChange="@LoadDatasourceFiles" multiple />
+        <br>
+        <p>Результаты: @_fileResponse</p>
+        <p>@_fileResponse</p>
+    </div>
+    
+    <div class="container">
+        <h1>Dashboard Creator</h1>
+        <br>
+        <h3>Создание нового dashboard из json файлов</h3>
+        <p>В открывшемся диалоге выбора файлов, выберите нужные для загрузки файлы. 
+            В одном файле должен содержаться один dashboard</p>
+        <InputFile OnChange="@LoadDashboardFiles" multiple />
+        <br>
+        <p>Результаты: @_fileResponse</p>
+        <p>@_fileResponse</p>
+    </div>
+    
+    <div class="container">
+        <br>
+        <h3>Создание нового dashboard из шаблона</h3>
+        <p>Укажите нужные параметры в полях ниже и нажмите кнопку Создать</p>
+        <label for="dashboardTitleInput" class="form-label">Название дашборда</label>
+        <input @bind="_dashboardTitle" type="text" class="form-control" id="dashboardTitleInput">
+        <label for="applicationGroupInput" class="form-label">Группа приложений</label>
+        <input @bind="_applicationGroup" type="text" class="form-control" id="applicationGroupInput">
+        <button @onclick="CreateDashboardFromTemplate">Создать дашборд</button>
+    </div>
+}
+else
+{
+    <EnterAnimation/>
+}
+
+@code {
+    private string _fileResponse = "Выберите файлы для загрузки";
+    private string _dashboardTitle;
+    private string _applicationGroup;
+    
+    private async void LoadDatasourceFiles(InputFileChangeEventArgs e)
+    {
+        var sb = new StringBuilder();
+        _fileResponse = string.Empty;
+        
+        foreach (var file in e.GetMultipleFiles())
+        {
+            var json = await new StreamReader(file.OpenReadStream()).ReadToEndAsync();
+            var datasource = JsonHelper.Deserialize<Datasource>(json);
+            var response = await GrafanaService.CreateDatasource(datasource);
+
+            sb.Append($"{response.Message}\n");
+        }
+        
+        _fileResponse = sb.ToString();
+    }
+    
+    private async void LoadDashboardFiles(InputFileChangeEventArgs e)
+    {
+        var sb = new StringBuilder();
+        _fileResponse = string.Empty;
+        
+        foreach (var file in e.GetMultipleFiles())
+        {
+            var json = await new StreamReader(file.OpenReadStream()).ReadToEndAsync();
+            var response = await GrafanaService.CreateDashboardWithoutValidation(json);
+
+            sb.Append($"{response}\n");
+        }
+        
+        _fileResponse = sb.ToString();
+    }
+    
+    private async Task<string> CreateDashboardFromTemplate()
+    {
+        var template = await File.ReadAllTextAsync("templates/dashboardTemplate.json");
+        var builder = new DashboardBuilder(template);
+
+        var dashboard = builder
+            .SetTitle(_dashboardTitle)
+            .SetApplicationGroup(_applicationGroup)
+            .Build();
+
+        var response = await GrafanaService.CreateDashboardWithoutValidation(dashboard);
+
+        return response;
+    }
+}

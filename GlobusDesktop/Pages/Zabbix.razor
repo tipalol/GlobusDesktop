@@ -1,0 +1,39 @@
+@page "/zabbix"
+@using GlobusDesktop.JsonRPC
+@using GlobusDesktop.Services
+@using Newtonsoft.Json.Linq
+@inject IConfigurationService Config
+
+<div class="container">
+    <h1>Zabbix</h1>
+    <input @bind="_zabbixResponse" type="text" class="form-control" placeholder="ZabbixResponse" aria-label="Host" aria-describedby="Host">
+    <button @onClick="ObserveZabbixApps" class="btn btn-outline-secondary" type="button">Observe Zabbix</button>
+</div>
+
+@code
+{
+    private string _zabbixResponse;
+    
+    private void ObserveZabbixApps()
+    {
+        using var rpcClient = new Client(Config.App.ZabbixConfiguration.Host);
+
+        rpcClient.Headers.Add("X-Application", "Observability");
+            
+        var namedParameters = JObject.Parse(@"{parentids: 52, output: ['name']}");
+        var request = rpcClient.NewRequest("services/get", namedParameters);
+        var response = rpcClient.Rpc(request);
+    
+        if (response.Result != null)
+        {
+            var result = response.Result;
+            Console.WriteLine(response.ToString());
+            _zabbixResponse = result.ToString();
+        }
+        else
+        {
+            Console.WriteLine($"Error in response, code:{response.Error.Code} message:{response.Error.Message}");
+            _zabbixResponse = $"Error in response, code:{response.Error.Code} message:{response.Error.Message}";
+        }
+    }
+}

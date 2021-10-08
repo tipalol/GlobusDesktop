@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlobusDesktop", "GlobusDesktop\GlobusDesktop.csproj", "{C94CB0AC-E034-4B7D-BD22-9C5F32C4B457}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObservabilityPlatform.GrafanaClient", "..\..\26.08.2021\ObservabilityPlatform\ObservabilityPlatform.GrafanaClient\ObservabilityPlatform.GrafanaClient.csproj", "{8D6B67AB-3E27-43CE-899F-C8F51FF42871}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{C94CB0AC-E034-4B7D-BD22-9C5F32C4B457}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C94CB0AC-E034-4B7D-BD22-9C5F32C4B457}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C94CB0AC-E034-4B7D-BD22-9C5F32C4B457}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D6B67AB-3E27-43CE-899F-C8F51FF42871}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D6B67AB-3E27-43CE-899F-C8F51FF42871}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D6B67AB-3E27-43CE-899F-C8F51FF42871}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D6B67AB-3E27-43CE-899F-C8F51FF42871}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

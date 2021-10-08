@@ -1,19 +1,12 @@
 using System;
-using System.Globalization;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using ElectronNET.API;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using GlobusDesktop.Data;
-using GlobusDesktop.Helpers;
 using GlobusDesktop.Services;
-using Microsoft.AspNetCore.Localization;
 using OpenTelemetry.Trace;
 
 namespace GlobusDesktop
@@ -45,9 +38,9 @@ namespace GlobusDesktop
             
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<WeatherForecastService>();
 
-            services.AddSingleton<ILocalizationService, LocalizationService>();
+            services.AddSingleton<IConfigurationService, ConfigurationService>();
+            services.AddSingleton<IGrafanaService, GrafanaService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

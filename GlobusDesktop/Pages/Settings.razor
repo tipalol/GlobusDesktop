@@ -1,14 +1,16 @@
-@inject ILocalizationService Localizer
-
 @page "/settings"
 @using GlobusDesktop.Helpers
 @using GlobusDesktop.Services
+@using GlobusDesktop.Configs
+@inject IConfigurationService Config;
 
 
 @code
 {
+    private string[] languages = {"Русский", "English"};
     private bool _ready = false;
     private int _counter = -1;
+    
 
     private int Count()
     {
@@ -23,43 +25,51 @@
         return "";
     }
 
-    private void ChooseCulture(string culture)
-    {
-        Serilog.Log.Information(culture + " " + CultureInfo.CurrentCulture.NativeName + " " + CultureHelper.DefaultCulture());
-        
-        CultureInfo.CurrentUICulture = new CultureInfo(culture);
-    }
-    
 }
 
 @if (_ready)
 {
-    <h1>@Localizer["Settings.PanelTitle"]</h1>
-    
-    <p>@Localizer["Settings.Language"]</p>
-    
-    <div class="select-box" style="width: 300px">
-        <div class="select-box__current" tabindex="1">
-            @foreach (var culture in CultureHelper.SupportedCultures)
-            {
-                <div class="select-box__value">
-                    <input class="select-box__input" type="radio" id="@Count()" value="1" name="Language" checked="checked" />
-                    <p class="select-box__input-text">@CultureInfo.GetCultureInfo(culture).NativeName</p>
-                </div>
-            }
-            @Reset()
-            <img class="select-box__icon" src="http://cdn.onlinewebfonts.com/svg/img_295694.svg" alt="Arrow Icon" aria-hidden="true"/>
+    <div class="container">
+        <h1>Settings</h1>
+        
+        
+
+        <p>Zabbix</p>
+        <div class="input-group mb-3">
+            <input @bind="_zabbixHost" type="text" class="form-control" placeholder="Host" aria-label="Host" aria-describedby="Host">
+            <div class="input-group-append">
+                <button @onClick="UpdateConfig" class="btn btn-outline-secondary" type="button">Save</button>
+            </div>
         </div>
-        <ul class="select-box__list">
-            @foreach (var culture in CultureHelper.SupportedCultures)
-            {
-                <li @onclick="() => ChooseCulture(culture)" >
-                    <label class="select-box__option" for="@Count()" aria-hidden="aria-hidden">@CultureInfo.GetCultureInfo(culture).NativeName</label>
-                </li>
-            }
-            @Reset()
-        </ul>
+        <div class="input-group mb-3">
+            <input @bind="_zabbixUser" type="text" class="form-control" placeholder="User" aria-label="User" aria-describedby="User">
+            <div class="input-group-append">
+                <button @onClick="UpdateConfig" class="btn btn-outline-secondary" type="button">Save</button>
+            </div>
+        </div>
+        <div class="input-group mb-3">
+            <input @bind="_zabbixPassword" type="text" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="Password">
+            <div class="input-group-append">
+                <button @onClick="UpdateConfig" class="btn btn-outline-secondary" type="button">Save</button>
+            </div>
+        </div>
+
+        <p>Grafana</p>
+        <div class="input-group mb-3">
+            <input @bind="_grafanaHost" type="text" class="form-control" placeholder="Host" aria-label="Host" aria-describedby="Host">
+            <div class="input-group-append">
+                <button @onClick="UpdateConfig" class="btn btn-outline-secondary" type="button">Save</button>
+            </div>
+        </div>
+        <div class="input-group mb-3">
+            <input @bind="_grafanaToken" type="text" class="form-control" placeholder="Token" aria-label="Token" aria-describedby="Token">
+            <div class="input-group-append">
+                <button @onClick="UpdateConfig" class="btn btn-outline-secondary" type="button">Save</button>
+            </div>
+        </div>
     </div>
+    
+    
 }
 else
     {
@@ -67,10 +77,41 @@ else
     }
     @code
     {
+        private string _zabbixHost;
+        private string _zabbixUser;
+        private string _zabbixPassword;
+        private string _grafanaHost;
+        private string _grafanaToken;
+        
         protected override async Task OnInitializedAsync()
         {
             _ready = false;
-            await Task.Delay(1000);
+            _zabbixHost = Config.App.ZabbixConfiguration.Host;
+            _zabbixUser = Config.App.ZabbixConfiguration.User;
+            _zabbixPassword = Config.App.ZabbixConfiguration.Password;
+            _grafanaHost = Config.App.GrafanaConfiguration.Host;
+            _grafanaToken = Config.App.GrafanaConfiguration.Token;
+            await Task.Delay(200);
             _ready = true;
+        }
+
+        private void UpdateConfig()
+        {
+            var zabbix = new ZabbixConfiguration()
+            {
+                Host = _zabbixHost,
+                User = _zabbixUser,
+                Password = _zabbixPassword
+            };
+
+            var grafana = new GrafanaConfiguration()
+            {
+                Host = _grafanaHost,
+                Token = _grafanaToken
+            };
+
+            Config.App.ZabbixConfiguration = zabbix;
+            Config.App.GrafanaConfiguration = grafana;
+            Config.Save();
         }
     }

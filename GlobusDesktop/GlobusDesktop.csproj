@@ -5,6 +5,7 @@
   <ItemGroup>
     <PackageReference Include="ElectronNET.API" Version="13.5.1" />
     <PackageReference Include="LumenWorks.Framework.IO" Version="3.8.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.2.0-alpha4" />
     <PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="1.2.0-alpha4" />
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.0.0-rc7" />
@@ -21,7 +22,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <AssetsSourceFiles Include="Languages/*.*"/>
+    <AssetsSourceFiles Include="Languages/*.*" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\26.08.2021\ObservabilityPlatform\ObservabilityPlatform.GrafanaClient\ObservabilityPlatform.GrafanaClient.csproj" />
   </ItemGroup>
   <Target Name="CopyCustomContent" AfterTargets="AfterBuild">
     <Copy SourceFiles="@(AssetsSourceFiles)" DestinationFolder="$(OutDir)/Languages" SkipUnchangedFiles="true" />
